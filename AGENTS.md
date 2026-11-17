@@ -28,3 +28,9 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+<!-- AGENT-MEMORY:BEGIN -->
+- App components in src/components use PascalCase filenames (e.g. FeatureCard.tsx); shadcn ui/ files keep their generated names — keeps components easy to find.
+- Backend is used for sign-in only (built-in auth users); no tables, RPCs, migrations or data queries — app data lives in an external AWS service.
+- Signed-in pages live under src/routes/_authenticated/ (client-only gate redirecting to /auth); signed-in home is /app.
+<!-- AGENT-MEMORY:END -->
