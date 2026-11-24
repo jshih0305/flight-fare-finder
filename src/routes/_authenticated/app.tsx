@@ -1,28 +1,27 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { LogOut, Radar } from "lucide-react";
 
 import { BrandMark } from "@/components/BrandMark";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { usePageMeta, type MetaTag } from "@/lib/page-meta";
 
-export const Route = createFileRoute("/_authenticated/app")({
-  head: () => ({
-    meta: [
-      { title: "Dashboard — Flight Price Notifier" },
-      { name: "description", content: "Your Flight Price Notifier dashboard." },
-      { property: "og:title", content: "Dashboard — Flight Price Notifier" },
-      { property: "og:description", content: "Your flight price alert dashboard." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "robots", content: "noindex" },
-    ],
-  }),
-  component: AppDashboard,
-});
+import { useAuthenticatedUser } from "./route";
 
-function AppDashboard() {
-  const { user } = Route.useRouteContext();
+const pageMeta: MetaTag[] = [
+  { title: "Dashboard — Flight Price Notifier" },
+  { name: "description", content: "Your Flight Price Notifier dashboard." },
+  { property: "og:title", content: "Dashboard — Flight Price Notifier" },
+  { property: "og:description", content: "Your flight price alert dashboard." },
+  { property: "og:type", content: "website" },
+  { name: "twitter:card", content: "summary" },
+  { name: "robots", content: "noindex" },
+];
+
+export function AppDashboard() {
+  usePageMeta(pageMeta);
+  const user = useAuthenticatedUser();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -30,7 +29,7 @@ function AppDashboard() {
     await queryClient.cancelQueries();
     queryClient.clear();
     await supabase.auth.signOut();
-    navigate({ to: "/auth", replace: true });
+    navigate("/auth", { replace: true });
   }
 
   return (

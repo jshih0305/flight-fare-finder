@@ -1,32 +1,29 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import { MailCheck } from "lucide-react";
 
 import { AuthCard } from "@/components/AuthCard";
 import { EmailPasswordForm } from "@/components/EmailPasswordForm";
 import { supabase } from "@/integrations/supabase/client";
+import { usePageMeta, type MetaTag } from "@/lib/page-meta";
 
-export const Route = createFileRoute("/signup")({
-  head: () => ({
-    meta: [
-      { title: "Sign up / 註冊 — Flight Price Notifier" },
-      { name: "description", content: "Create a Flight Price Notifier account and get emailed when fares drop below your budget." },
-      { property: "og:title", content: "Sign up — Flight Price Notifier" },
-      { property: "og:description", content: "Create an account and get fare-drop emails for flights from Taipei." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: SignUpPage,
-});
+const pageMeta: MetaTag[] = [
+  { title: "Sign up / 註冊 — Flight Price Notifier" },
+  { name: "description", content: "Create a Flight Price Notifier account and get emailed when fares drop below your budget." },
+  { property: "og:title", content: "Sign up — Flight Price Notifier" },
+  { property: "og:description", content: "Create an account and get fare-drop emails for flights from Taipei." },
+  { property: "og:type", content: "website" },
+  { name: "twitter:card", content: "summary_large_image" },
+];
 
-function SignUpPage() {
+export function SignUpPage() {
+  usePageMeta(pageMeta);
   const navigate = useNavigate();
   const [pendingEmail, setPendingEmail] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/app", replace: true });
+      if (data.session) navigate("/app", { replace: true });
     });
   }, [navigate]);
 
@@ -38,7 +35,7 @@ function SignUpPage() {
     });
     if (error) return error.message;
     if (data.session) {
-      navigate({ to: "/app", replace: true });
+      navigate("/app", { replace: true });
     } else {
       setPendingEmail(email);
     }
