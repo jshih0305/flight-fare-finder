@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "react-router";
 import { BellRing, CalendarX2, Radar, ArrowRight } from "lucide-react";
 
 import { FadeIn } from "@/components/FadeIn";
@@ -7,26 +7,22 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-routes.jpg";
+import { usePageMeta, type MetaTag } from "@/lib/page-meta";
 
-export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Flight Price Notifier 機票降價通知 — Fare-drop email alerts from Taipei" },
-      {
-        name: "description",
-        content: "設定航線與目標價，機票降價就通知你。Set a route and a target price — we email you when the fare drops.",
-      },
-      { property: "og:title", content: "Flight Price Notifier 機票降價通知" },
-      {
-        property: "og:description",
-        content: "Set a route and a target price — we email you when the fare from Taipei drops.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: Index,
-});
+const pageMeta: MetaTag[] = [
+  { title: "Flight Price Notifier 機票降價通知 — Fare-drop email alerts from Taipei" },
+  {
+    name: "description",
+    content: "設定航線與目標價，機票降價就通知你。Set a route and a target price — we email you when the fare drops.",
+  },
+  { property: "og:title", content: "Flight Price Notifier 機票降價通知" },
+  {
+    property: "og:description",
+    content: "Set a route and a target price — we email you when the fare from Taipei drops.",
+  },
+  { property: "og:type", content: "website" },
+  { name: "twitter:card", content: "summary_large_image" },
+];
 
 const features = [
   {
@@ -49,7 +45,8 @@ const features = [
   },
 ];
 
-function Index() {
+export function Index() {
+  usePageMeta(pageMeta);
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader />

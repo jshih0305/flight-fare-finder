@@ -1,18 +1,37 @@
-import { QueryClient } from "@tanstack/react-query";
-import { createRouter } from "@tanstack/react-router";
-import { routeTree } from "./routeTree.gen";
+import { Navigate, type RouteObject } from "react-router";
 
-export const getRouter = () => {
-  // One client per request: a module-level QueryClient leaks cached data between SSR requests.
-  const queryClient = new QueryClient();
+import { ErrorComponent, NotFoundComponent, RootComponent } from "./routes/root";
+import { Index } from "./routes/index";
+import { SignInPage } from "./routes/auth";
+import { SignUpPage } from "./routes/signup";
+import { AppDashboard } from "./routes/_authenticated/app";
+import {
+  AUTHENTICATED_ROUTE_ID,
+  AuthenticatedLayout,
+  authenticatedLoader,
+} from "./routes/_authenticated/route";
 
-  const router = createRouter({
-    routeTree,
-    context: { queryClient },
-    scrollRestoration: true,
-    // Lets Query own freshness; set caching defaults on the QueryClient, not the router.
-    defaultPreloadStaleTime: 0,
-  });
-
-  return router;
-};
+export const routes: RouteObject[] = [
+  {
+    id: "root",
+    element: <RootComponent />,
+    errorElement: <ErrorComponent />,
+    // Rendered while the first navigation's loaders (the auth gate) resolve.
+    hydrateFallbackElement: null,
+    children: [
+      { index: true, element: <Index /> },
+      { path: "auth", element: <SignInPage /> },
+      { path: "signup", element: <SignUpPage /> },
+      // Friendly aliases for the sign-in / sign-up pages.
+      { path: "sign-in", element: <Navigate to="/auth" replace /> },
+      { path: "sign-up", element: <Navigate to="/signup" replace /> },
+      {
+        id: AUTHENTICATED_ROUTE_ID,
+        loader: authenticatedLoader,
+        element: <AuthenticatedLayout />,
+        children: [{ path: "app", element: <AppDashboard /> }],
+      },
+      { path: "*", element: <NotFoundComponent /> },
+    ],
+  },
+];
